@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Websocket</title>
+</head>
+<body>
+
+<script>
+
+    var socket = new WebSocket("ws://localhost:8080/support");
+
+    socket.addEventListener('message', function (evt) {
+        userListener.log(evt.data);
+    });
+
+    socket.addEventListener('open', function (evt) {
+        userListener.log('connected')
+    })
+</script>
+</body>
+</html>

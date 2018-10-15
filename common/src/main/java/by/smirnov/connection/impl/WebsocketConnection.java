@@ -32,7 +32,7 @@ public class WebsocketConnection implements OutboundConnection, IncomingConnecti
 
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
-        System.out.println("Goodbye");
+        System.out.println("You are disconnected from server. Goodbye");
     }
 
     @OnError

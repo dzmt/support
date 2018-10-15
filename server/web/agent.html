@@ -14,17 +14,12 @@
         <li id="server" class="partner__item partner__item-active">
           SERVER
         </li>
-        <li id="agent" class="partner__item">
-          Ask a question
-        </li>
       </ul>
     </section>
     
     <section class="dialog">
       <ul class="dialog__list">
         <li id="server-dialog" class="dialog__item dialog__item-active">
-        </li>
-        <li id="agent-dialog" class="dialog__item">
         </li>
       </ul>
     </section>
@@ -45,9 +40,9 @@
   <section class="modal">
     <div class="modal__container">
       <input type="text" class="modal__input-name" placeholder="Enter your name" required tabindex="0" autofocus>
-      <label class="modal__lavel-count" hidden>
+      <label class="modal__lavel-count">
         active chats:
-        <input type="number" value="1" class="modal__input-count" required>
+        <input type="number" min="1" max="10" class="modal__input-count" required>
       </label>
       <button class="btn btn-send">Enter</button>
     </div>
@@ -60,10 +55,10 @@
     </div>
   </section>
   
-  <script src="js/client.js"></script>
+  <script src="js/agent.js"></script>
   <script src="js/util.js"></script>
   <script src="js/chat.js"></script>
-  <script src="js/client-backend.js"></script>
+  <script src="js/backend.js"></script>
   <script src="js/modal.js"></script>
 </body>
 </html>

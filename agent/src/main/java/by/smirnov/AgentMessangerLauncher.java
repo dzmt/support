@@ -14,7 +14,7 @@ public class AgentMessangerLauncher {
         MessengerBuilder builder = new MessengerBuilder();
 
         try {
-            client = builder.create(Role.AGENT, "ws://localhost:8080/agent");
+            client = builder.create(Role.AGENT, "ws://188.225.56.206:80/support/agent");
         } catch (URISyntaxException e) {
             System.out.println("Not valid URI address, check address");
         }
@@ -22,9 +22,9 @@ public class AgentMessangerLauncher {
         try {
             client.start();
         } catch (IOException e) {
-            System.out.println("Server is not available now. Try later. First");
+            System.out.println("Server is not available now. Try later.");
         } catch (DeploymentException e) {
-            System.out.println("You can't to connect to server. Try later. Second");
+            System.out.println("You can't to connect to server. Try later.");
         }
     }
 }

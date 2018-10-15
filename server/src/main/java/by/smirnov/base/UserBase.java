@@ -18,20 +18,24 @@ public class UserBase {
     public void addClient(Client person) {
         clients.put(person.getId(), person);
 
-        logger.info("client[" + person.getId() + "] status[" + person.getStatus() + "] add to client base");
+        logger.info("client[" + person.getId() + "] status[" + person.getStatus() +
+                "] add to client base - count of agents in base: " + agents.size() +
+                " - count of waiting clients: " + waitingRoom.size());
     }
 
     public void removeClient(Client person) {
         waitingRoom.remove(person);
         clients.remove(person.getId(), person);
 
-        logger.info("client[" + person.getId() + "] status[" + person.getStatus() + "] remove from client base");
+        logger.info("client[" + person.getId() + "] status[" + person.getStatus() + "] remove from client base - count of agents in base: " + agents.size() +
+                " - count of waiting clients: " + waitingRoom.size());
 
     }
 
     public void addAgent(Agent person) {
         agents.put(person.getId(), person);
-        logger.info("agent[" + person.getId() + "] status[" + person.getStatus() + "] add to agent base.");
+        logger.info("agent[" + person.getId() + "] status[" + person.getStatus() + "] add to agent base - count of agents in base: " + agents.size() +
+                " - count of waiting clients: " + waitingRoom.size());
 
     }
 
@@ -39,7 +43,8 @@ public class UserBase {
         if (agents.contains(person)) {
             agents.remove(person.getId(), person);
         }
-        logger.info("agent[" + person.getId() + "] status[" + person.getStatus() + "] remove from agent base.");
+        logger.info("agent[" + person.getId() + "] status[" + person.getStatus() + "] remove from agent base - - count of agents in base: " + agents.size() +
+                " - count of waiting clients: " + waitingRoom.size());
     }
 
     public boolean hasReadyAgent() {
@@ -59,7 +64,8 @@ public class UserBase {
      public void removeFromWaitingRoom(Client person) {
          if (waitingRoom.contains(person)) {
             waitingRoom.remove();
-             logger.info("client[" + person.getId() + "] status[" + person.getStatus() + "] remove from waiting room");
+             logger.info("client[" + person.getId() + "] status[" + person.getStatus() + "] remove from waiting room - - count of agents in base: " + agents.size() +
+                     " - count of waiting clients: " + waitingRoom.size());
          }
     }
 

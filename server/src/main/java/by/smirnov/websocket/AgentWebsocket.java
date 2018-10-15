@@ -62,23 +62,17 @@ public class AgentWebsocket implements Agent {
     @OnClose
     public void onClose(Session session, CloseReason reason) {
         logger.info("agent close connection with server");
-    }
-
-    @OnError
-    public void error(Session session, Throwable error) {
-        logger.error(error);
+        removeAgentFromBase();
 
         Message exit = new Message(Type.EXIT, "exit");
         exit.setFrom(getId());
 
-        removeAgentFromBase();
         if (status.equals(Status.TALKING)) {
             Collection<Client> clients = unsubcribeAll();
             clients.forEach( client -> {
                 try {
                     client.unsubcribe();
                     client.send(exit);
-                    client.setStatus(Status.SLEEPING);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (EncodeException e) {
@@ -90,6 +84,11 @@ public class AgentWebsocket implements Agent {
         setStatus(Status.UNREGISTERED);
 
         logger.info("agent[" + getId() + "] status[" + getStatus() + "] - safety exit.");
+    }
+
+    @OnError
+    public void error(Session session, Throwable error) {
+        logger.error(error);
     }
 
     @Override

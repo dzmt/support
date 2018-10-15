@@ -58,11 +58,6 @@ public class ClientWebsocket implements Client {
     @OnClose
     public void onClose(Session session, CloseReason reason) {
         logger.info("user close connection with server");
-    }
-
-    @OnError
-    public void error(Session session, Throwable error) {
-        logger.error(error);
 
         if (!status.equals(UNREGISTERED)) {
             Message exit = new Message(Type.EXIT, "exit");
@@ -87,6 +82,11 @@ public class ClientWebsocket implements Client {
             setStatus(UNREGISTERED);
         }
         logger.info("client[" + getId() + "] status[" + getStatus() + "] - safety exit.");
+    }
+
+    @OnError
+    public void error(Session session, Throwable error) {
+        logger.error(error);
     }
 
     @Override

@@ -22,7 +22,7 @@ public class RegisterAgentMessageCommand implements AgentMessageCommand {
         person.setMaxCountActiveChat(MessageUtil.getMaxChatFromRegistrationMessage(message));
         person.setStatus(SLEEPING);
         person.addToBase();
-        person.send(MessageUtil.createReportBackeMessage(person.getId(), person.getName()));
+        person.send(MessageUtil.createReportBackMessage(person.getId(), person.getName()));
         person.subscribeFromWaitingRoom();
 
         logger.info("agent " + person.getId() + " " + person.getStatus() + " are registered");

@@ -21,7 +21,7 @@ public class RegisterClientMessageCommand implements ClientMessageCommand {
         person.setMaxCountActiveChat(MessageUtil.getMaxChatFromRegistrationMessage(message));
         person.setStatus(SLEEPING);
         person.addToBase();
-        person.send(MessageUtil.createReportBackeMessage(person.getId(), person.getName()));
+        person.send(MessageUtil.createReportBackMessage(person.getId(), person.getName()));
 
         logger.info("client " + person.getId() + " " + person.getStatus() + " are registered");
     }

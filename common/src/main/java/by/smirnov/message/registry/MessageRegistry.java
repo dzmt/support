@@ -10,22 +10,26 @@ import java.util.HashMap;
 import java.util.Properties;
 
 public class MessageRegistry {
-    private String path;
-    private Properties properties;
-    private HashMap<String, Message> registry;
+    private static Properties properties;
+    private static HashMap<String, Message> registry;
 
-    public MessageRegistry(String path) {
-        this.path = path;
+    static {
+        try {
+            load("server.messages.properties");
+            createMessagesRegistry();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void load() throws IOException{
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource(path).getFile());
+    private static void load(String path) throws IOException{
         properties = new Properties();
+        ClassLoader classLoader = MessageRegistry.class.getClassLoader();
+        File file = new File(classLoader.getResource(path).getFile());
         properties.load(classLoader.getResourceAsStream(path));
     }
 
-    public void createRegistry() {
+    private static void createMessagesRegistry() {
         registry = new HashMap<>();
         properties
                 .stringPropertyNames()
@@ -36,12 +40,11 @@ public class MessageRegistry {
                     registry.put(key, message);
                 });
     }
-
-    public Message getMessage(String name) {
+    public static Message getMessage(String name) {
         return registry.get(name);
     }
 
-    private Message createContentMessage(String text) {
+    private static Message createContentMessage(String text) {
         return new Message(Type.CONTENT, text);
     }
 

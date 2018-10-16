@@ -17,7 +17,7 @@ public class MessageUtil {
         return null;
     }
 
-    public static Message createReportBackeMessage(String id, String name) {
+    public static Message createReportBackMessage(String id, String name) {
         return new Message(Type.USER, String.format(reportBacktTemplate, id, name));
     }
 
@@ -28,11 +28,11 @@ public class MessageUtil {
 
     public static String getNameFromRegistrationMessage(Message message) {
         String[] tokens = message.getText().trim().split(" ");
-        return tokens[0];
+        return tokens[0].trim();
     }
 
     public static int getMaxChatFromRegistrationMessage(Message message) {
         String[] tokens = message.getText().trim().split(" ");
-        return Integer.parseInt(tokens[1]);
+        return Integer.parseInt(tokens[1].trim());
     }
 }

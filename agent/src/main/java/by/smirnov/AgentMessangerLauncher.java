@@ -14,7 +14,7 @@ public class AgentMessangerLauncher {
         MessengerBuilder builder = new MessengerBuilder();
 
         try {
-            client = builder.create(Role.AGENT, "ws://188.225.56.206:80/support/agent");
+            client = builder.create(Role.AGENT, "ws://localhost:8080/agent");
         } catch (URISyntaxException e) {
             System.out.println("Not valid URI address, check address");
         }

@@ -10,6 +10,7 @@ import by.smirnov.hander.DirectorChainHandler;
 import by.smirnov.message.Message;
 import by.smirnov.facade.Client;
 import by.smirnov.message.enumeration.Type;
+import by.smirnov.message.registry.MessageRegistry;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
@@ -48,8 +49,7 @@ public class AgentWebsocket implements Agent {
         interlocutors = new HashMap<>();
 
         try {
-            session.getBasicRemote().sendObject(new Message(Type.CONTENT, "You have connected to the system. " +
-                    "For registration enter command '/register <your_name>'"));
+            session.getBasicRemote().sendObject(MessageRegistry.getMessage("agent.connection"));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (EncodeException e) {

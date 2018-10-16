@@ -6,18 +6,18 @@ import by.smirnov.facade.Agent;
 import by.smirnov.facade.Client;
 import by.smirnov.message.Message;
 import by.smirnov.message.enumeration.Type;
+import by.smirnov.message.registry.MessageRegistry;
 
 import javax.websocket.EncodeException;
 import java.io.IOException;
 
 public class AgentLeaveMessageCommand implements AgentMessageCommand {
-    private String template = "You are not talking somebody. Enter '/exit' command for exit or wait question from client.";
     private String leftMessage = "You have left chat with %s.";
 
     @Override
     public void handle(Message message, Agent person) throws IOException, EncodeException {
         if (person.getStatus().equals(Status.SLEEPING)) {
-            person.send(new Message(Type.CONTENT, template));
+            person.send(MessageRegistry.getMessage("agent.sleeping.leave"));
         } else {
             Client client = person.unsubscribeById(message.getTo());
             client.send(message);

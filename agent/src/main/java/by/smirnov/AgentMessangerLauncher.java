@@ -7,16 +7,21 @@ import by.smirnov.messenger.MessengerBuilder;
 import javax.websocket.DeploymentException;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Properties;
 
 public class AgentMessangerLauncher {
     public static void main(String[] args) {
         Messenger client = null;
         MessengerBuilder builder = new MessengerBuilder();
+        Properties prop = new Properties();
 
         try {
-            client = builder.create(Role.AGENT, "ws://localhost:8080/agent");
+            prop.load(ClassLoader.getSystemResourceAsStream("websocket.properties"));
+            client = builder.create(Role.AGENT, prop.getProperty("websocket.agent.url"));
         } catch (URISyntaxException e) {
             System.out.println("Not valid URI address, check address");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         try {

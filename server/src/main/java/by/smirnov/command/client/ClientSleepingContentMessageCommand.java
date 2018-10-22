@@ -1,26 +1,29 @@
-package by.smirnov.command.client.type;
+package by.smirnov.command.client;
 
-import by.smirnov.command.client.ClientMessageCommand;
-import by.smirnov.facade.Client;
+import by.smirnov.command.MessageCommand;
+import by.smirnov.enumeration.Status;
 import by.smirnov.facade.User;
 import by.smirnov.message.Message;
-import by.smirnov.message.enumeration.Type;
+import by.smirnov.message.registry.MessageRegistry;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 
 import javax.websocket.EncodeException;
 import java.io.IOException;
 
-public class ClientSleepingContentMessageCommand implements ClientMessageCommand{
+public class ClientSleepingContentMessageCommand implements MessageCommand{
     private static final Logger logger = LogManager.getLogger(ClientSleepingContentMessageCommand.class);
 
     @Override
     public void handle(Message message, User person) throws IOException, EncodeException {
-        if (person.subscribe()) {
-            person.notifySubscriber(message);
+        boolean isSubscribed = person.subscribeReady();
+
+        if (isSubscribed) {
+            person.getListInterlocutors().get(0).send(message);
         } else {
-            person.send(new Message(Type.CONTENT, "There is no free agents now. " +
-                    "You are queued up and our agents will answer soon."));
+            person.setStatus(Status.PENDING);
+            person.addToWaitingRoom();
+            person.send(MessageRegistry.getMessage("client.sleeping.content"));
             person.writeBuffer(message);
         }
     }

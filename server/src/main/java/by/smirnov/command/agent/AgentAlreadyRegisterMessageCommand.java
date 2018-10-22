@@ -1,6 +1,6 @@
-package by.smirnov.command.agent.type;
+package by.smirnov.command.agent;
 
-import by.smirnov.command.agent.AgentMessageCommand;
+import by.smirnov.command.MessageCommand;
 import by.smirnov.facade.User;
 import by.smirnov.message.Message;
 import by.smirnov.message.registry.MessageRegistry;
@@ -8,7 +8,7 @@ import by.smirnov.message.registry.MessageRegistry;
 import javax.websocket.EncodeException;
 import java.io.IOException;
 
-public class AgentAlreadyRegisterMessageCommand implements AgentMessageCommand {
+public class AgentAlreadyRegisterMessageCommand implements MessageCommand {
 
     @Override
     public void handle(Message message, User person) throws IOException, EncodeException {

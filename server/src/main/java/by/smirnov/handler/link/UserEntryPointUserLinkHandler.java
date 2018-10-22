@@ -1,10 +1,10 @@
-package by.smirnov.hander.link;
+package by.smirnov.handler.link;
 
 import by.smirnov.command.StatusCommand;
 import by.smirnov.command.StatusCommandDirector;
 import by.smirnov.enumeration.Status;
 import by.smirnov.facade.User;
-import by.smirnov.hander.UserLinkHandler;
+import by.smirnov.handler.UserLinkHandler;
 import by.smirnov.message.Message;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -20,11 +20,11 @@ public class UserEntryPointUserLinkHandler implements MessageHandler.Whole<Messa
     private UserLinkHandler next;
 
 
-    private HashMap<Status, StatusCommand> commands = StatusCommandDirector.getDefaultClientCommands();
+    private HashMap<Status, StatusCommand> commands;
 
-
-    public UserEntryPointUserLinkHandler(User person) {
+    public UserEntryPointUserLinkHandler(User person, HashMap<Status, StatusCommand> commands) {
         this.person = person;
+        this.commands = commands;
     }
 
     @Override

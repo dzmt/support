@@ -3,13 +3,10 @@ package by.smirnov.websocket;
 import by.smirnov.base.UserBase;
 import by.smirnov.coder.MessageDecoder;
 import by.smirnov.coder.MessageEncoder;
-import by.smirnov.enumeration.Role;
 import by.smirnov.enumeration.Status;
-import by.smirnov.facade.Agent;
-import by.smirnov.hander.DirectorChainHandler;
+import by.smirnov.facade.User;
+import by.smirnov.handler.DirectorChainHandler;
 import by.smirnov.message.Message;
-import by.smirnov.facade.Client;
-import by.smirnov.message.enumeration.Type;
 import by.smirnov.message.registry.MessageRegistry;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -17,71 +14,60 @@ import org.apache.log4j.Logger;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static by.smirnov.enumeration.Status.SLEEPING;
-import static by.smirnov.enumeration.Status.TALKING;
 import static by.smirnov.enumeration.Status.UNREGISTERED;
 
 @ServerEndpoint(value="/agent", decoders = {MessageDecoder.class}, encoders = {MessageEncoder.class})
-public class AgentWebsocket implements Agent {
+public class AgentWebsocket extends User {
 
     private static final Logger logger = LogManager.getLogger(AgentWebsocket.class);
     private static UserBase base = new UserBase();
 
-    private Session session;
-    private Status status;
-    private Role role;
-    private String name;
+    public AgentWebsocket() {
+    }
 
-    private int maxActiveChats;
-    private HashMap<String, Client> interlocutors;
+    private transient Session session;
+
+    private Status status;
+    private String name;
+    private String id;
+    private int maxCountActiveChat;
+    private Set<String> interlocutors;
 
     @OnOpen
     public void onOpen(Session session) {
-        logger.info("connection is established with person id[ " + session.getId() + "]");
 
         this.session = session;
         status = UNREGISTERED;
-        interlocutors = new HashMap<>();
+        interlocutors = new HashSet<>();
+        id = UUID.randomUUID().toString();
+
 
         try {
-            session.getBasicRemote().sendObject(MessageRegistry.getMessage("agent.connection"));
+            send(MessageRegistry.getMessage("connection"));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (EncodeException e) {
             e.printStackTrace();
         }
-
         session.addMessageHandler(DirectorChainHandler.buildAgentChain(this));
+
+        logger.info("client has connected: " + "[" + getId() + "] status[" + getStatus() + "]");
     }
 
     @OnClose
     public void onClose(Session session, CloseReason reason) {
         logger.info("agent close connection with server");
-        removeAgentFromBase();
 
-        Message exit = new Message(Type.EXIT, "exit");
-        exit.setFrom(getId());
-
-        if (status.equals(Status.TALKING)) {
-            Collection<Client> clients = unsubcribeAll();
-            clients.forEach( client -> {
-                try {
-                    client.unsubcribe();
-                    client.send(exit);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (EncodeException e) {
-                    e.printStackTrace();
-                }
-            });
+        if (!getStatus().equals(UNREGISTERED)) {
+            try {
+                this.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
-        setStatus(Status.UNREGISTERED);
 
         logger.info("agent[" + getId() + "] status[" + getStatus() + "] - safety exit.");
     }
@@ -92,73 +78,13 @@ public class AgentWebsocket implements Agent {
     }
 
     @Override
-    public void notifySubscriber(Message message) throws IOException, EncodeException {
-        interlocutors.get(message.getTo()).send(message);
+    public String getId() {
+        return id;
     }
 
     @Override
-    public void subscribe(Client client) {
-        interlocutors.put(client.getId(), client);
-        if (!status.equals(TALKING)) {
-            status = TALKING;
-        }
-    }
-
-    @Override
-    public void unsubcribe(Client client) {
-        interlocutors.remove(client.getId(), client);
-        if (interlocutors.size() == 0) {
-            status = SLEEPING;
-        }
-    }
-
-    @Override
-    public Client unsubscribeById(String id) {
-        Client client = interlocutors.get(id);
-        interlocutors.remove(id, client);
-        if (interlocutors.size() == 0) {
-            status = SLEEPING;
-        }
-        return client;
-    }
-
-    @Override
-    public void removeAgentFromBase() {
-        base.removeAgent(this);
-    }
-
-    @Override
-    public Collection<Client> unsubcribeAll() {
-        Collection<Client> clients = new ArrayList<>(interlocutors.values());
-        interlocutors.clear();
-        return clients;
-    }
-
-    @Override
-    public void subscribeFromWaitingRoom() throws IOException, EncodeException {
-        String template = "%s %s";
-        if (base.hasWaitingClients()) {
-            Client client = base.getWaitingClient();
-            interlocutors.put(client.getId(), client);
-            client.setStatus(TALKING);
-            this.setStatus(TALKING);
-            client.subscribe(this);
-            client.send(new Message(Type.INTERLOCUTOR, String.format(template, getId(), getName())));
-            send(new Message(Type.INTERLOCUTOR, String.format(template, client.getId(), client.getName())));
-            sendBuffer(client.clearBuffer());
-        }
-    }
-
-    @Override
-    public void sendBuffer(LinkedList<Message> messages) throws IOException, EncodeException {
-        while (!messages.isEmpty()) {
-            send(messages.poll());
-        }
-    }
-
-    @Override
-    public boolean ready() {
-        return maxActiveChats > interlocutors.size();
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -167,28 +93,8 @@ public class AgentWebsocket implements Agent {
     }
 
     @Override
-    public void send(Message message) throws IOException, EncodeException {
-        session.getBasicRemote().sendObject(message);
-    }
-
-    @Override
-    public Session getSession() {
-        return session;
-    }
-
-    @Override
-    public String getId() {
-        return session.getId();
-    }
-
-    @Override
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override
@@ -197,12 +103,118 @@ public class AgentWebsocket implements Agent {
     }
 
     @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
     public void setMaxCountActiveChat(int count) {
-        this.maxActiveChats = count;
+        this.maxCountActiveChat = count;
+    }
+
+    @Override
+    public int getMaxCountActiveChat() {
+        return maxCountActiveChat;
+    }
+
+    @Override
+    public Set<String> getInterlocutors() {
+        return interlocutors;
+    }
+
+    @Override
+    public void setInterlocutors(Set<String> interlocutors) {
+        this.interlocutors = interlocutors;
+    }
+
+    @Override
+    public Session getSession() {
+        return session;
     }
 
     @Override
     public void addToBase() {
         base.addAgent(this);
+    }
+
+    @Override
+    public void addToWaitingRoom() {
+
+    }
+
+    @Override
+    public void send(Message message) throws IOException, EncodeException {
+        session.getBasicRemote().sendObject(message);
+    }
+
+    @Override
+    public void subscribe(User client) {
+        interlocutors.add(client.getId());
+    }
+
+    @Override
+    public void unsubcribe(User client) {
+        interlocutors.remove(client.getId());
+    }
+
+
+    @Override
+    public void notifySubscriber(Message message) throws IOException, EncodeException {
+        if (interlocutors.contains(message.getTo())) {
+            base.getClientById(message.getTo()).send(message);
+        }
+    }
+
+    @Override
+    public boolean subscribeReady() throws IOException, EncodeException {
+        User readyUser = base.getWaitingClient();
+        if (readyUser != null) {
+            subscribeSequence(readyUser);
+            LinkedList<Message> buffer = readyUser.readBuffer();
+            while (!buffer.isEmpty())
+                this.send(buffer.poll());
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public List<User> getListInterlocutors() {
+        return base.getClients().stream()
+                .filter( client ->
+                        interlocutors.contains(client.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public int getQuantityInterlocutors() {
+        return interlocutors.size();
+    }
+
+    @Override
+    public boolean ready() {
+        return interlocutors.size() < maxCountActiveChat;
+    }
+
+    @Override
+    public void removeFromBase() {
+        base.removeAgent(this);
+    }
+
+    @Override
+    public void writeBuffer(Message message) {
+    }
+
+
+
+    @Override
+    public LinkedList<Message> readBuffer() {
+        return null;
+    }
+
+    @Override
+    public void removeFromWaitingRoom() {
+
     }
 }

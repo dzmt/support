@@ -1,4 +1,4 @@
-package by.smirnov.hander;
+package by.smirnov.handler;
 
 import by.smirnov.facade.User;
 import by.smirnov.message.Message;

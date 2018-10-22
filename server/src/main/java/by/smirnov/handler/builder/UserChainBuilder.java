@@ -1,6 +1,6 @@
-package by.smirnov.hander.builder;
+package by.smirnov.handler.builder;
 
-import by.smirnov.hander.UserLinkHandler;
+import by.smirnov.handler.UserLinkHandler;
 import by.smirnov.message.Message;
 
 import javax.websocket.MessageHandler;

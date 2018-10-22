@@ -1,7 +1,6 @@
-package by.smirnov.command.client.type;
+package by.smirnov.command.client;
 
-import by.smirnov.command.client.ClientMessageCommand;
-import by.smirnov.facade.Client;
+import by.smirnov.command.MessageCommand;
 import by.smirnov.facade.User;
 import by.smirnov.message.Message;
 import by.smirnov.message.util.MessageUtil;
@@ -13,7 +12,7 @@ import java.io.IOException;
 
 import static by.smirnov.enumeration.Status.SLEEPING;
 
-public class RegisterClientMessageCommand implements ClientMessageCommand {
+public class RegisterClientMessageCommand implements MessageCommand {
     private static final Logger logger = LogManager.getLogger(RegisterClientMessageCommand.class);
 
     @Override

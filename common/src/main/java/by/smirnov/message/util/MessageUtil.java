@@ -12,13 +12,12 @@ public class MessageUtil {
 
     private static String reportBacktTemplate = "%s %s";
 
-    private static Message generateRegisterMessage() {
-
-        return null;
-    }
-
     public static Message createReportBackMessage(String id, String name) {
         return new Message(Type.USER, String.format(reportBacktTemplate, id, name));
+    }
+
+    public static Message createInterlocutorMessage(String id, String name) {
+        return new Message(Type.INTERLOCUTOR, String.format(reportBacktTemplate, id, name));
     }
 
     public static Message createGreetingMessage(String name, Role role) {

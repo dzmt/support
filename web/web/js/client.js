@@ -6,7 +6,7 @@
   const INTERLOCUTOR_LEAVE = 'Agent has left chat. If you need help, ask a question.'
   const LEAVE_CHAT_WITH_AGENT = 'YOu have left chat with agent.  If you need help, ask a question.'
 
-  const WEBSOCKET_URL = 'ws://localhost:8080/client';
+  const WEBSOCKET_URL = 'ws://localhost:8080/support/client';
 
   window.user = {
     CONNECTED_INTERLOCUTOR: CONNECTED_INTERLOCUTOR,

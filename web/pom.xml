@@ -10,42 +10,28 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>web</artifactId>
+    <packaging>war</packaging>
 
     <dependencies>
         <dependency>
             <groupId>by.smirnov</groupId>
             <artifactId>common</artifactId>
-            <version>1.0</version>
         </dependency>
 
         <dependency>
             <groupId>by.smirnov</groupId>
             <artifactId>server</artifactId>
-            <version>1.0</version>
         </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
-            <version>2.25.1</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.glassfish.jersey.containers</groupId>-->
-            <!--<artifactId>jersey-container-servlet</artifactId>-->
-            <!--<version>2.27</version>-->
-        <!--</dependency>-->
-
-
-
     </dependencies>
-
 
     <build>
         <plugins>
